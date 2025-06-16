@@ -1,0 +1,2 @@
+#!/bin/bash
+echo $(( $(tr 'water' 01234 <<< $WATER) + $(tr 'stir.' 01234 <<< $STIR) )) | tr 01234567 bestchol
