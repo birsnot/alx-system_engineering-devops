@@ -1,2 +1,3 @@
+
 #!/bin/bash
-printf "hello $USER"
+printf "hello $(id -un)\n"
