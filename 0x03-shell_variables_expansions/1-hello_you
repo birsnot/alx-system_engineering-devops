@@ -1,3 +1,2 @@
-
 #!/bin/bash
 printf "hello $(id -un)\n"
