@@ -1,3 +1,5 @@
+### Diagram Layout
+
 ![Simple web stack](simple-web-stack.png)
 
 ## Explanations
@@ -40,6 +42,8 @@ Through the **Internet**, using **TCP/IP protocols** like HTTP/HTTPS over port 8
 
 
 ---
+### Diagram Layout
+
 ![Distributed web infrastructure](distributed-web-infrastructure.png)
 
 ## Explanations
@@ -114,3 +118,87 @@ Through the **Internet**, using **TCP/IP protocols** like HTTP/HTTPS over port 8
 * **No Monitoring**:
 
   * No system in place to detect failures, performance degradation, etc.
+
+---
+### Diagram Layout
+
+![Secured and Monitored Web Infrastructure](secured_and_monitored_web_infrastructure.png)
+
+## Explanations
+
+### **Why Each New Element Was Added**
+
+* **Firewalls (3)**: Each server (web1, web2, DB) has a firewall to restrict incoming and outgoing traffic to only what's necessary (e.g., only allow port 443 for HTTPS).
+* **SSL Certificate**: To encrypt communication between the user and your site (HTTPS), ensuring data confidentiality.
+* **Monitoring Clients**: Installed on each server to send metrics/logs to an external monitoring service (e.g., Sumologic, Datadog, Prometheus).
+
+---
+
+### **What Are Firewalls For?**
+
+* Block unauthorized access.
+* Define allowed traffic rules (e.g., only allow TCP 443 on web servers, TCP 3306 only from app servers to DB).
+* First layer of defense against attacks (DDoS, brute-force, etc.).
+
+---
+
+### **Why Serve Over HTTPS?**
+
+* Encrypts communication, protecting sensitive data (e.g., logins, cookies).
+* Prevents MITM (Man-in-the-middle) attacks.
+* Builds user trust (no browser warning).
+* Required for SEO and modern browsers.
+
+---
+
+### **What Is Monitoring Used For?**
+
+* Tracks server health, CPU, memory, disk, QPS, traffic, errors, etc.
+* Detects issues early before downtime.
+* Helps debugging and performance tuning.
+* Can trigger alerts based on thresholds.
+
+---
+
+### **How Monitoring Collects Data**
+
+* A monitoring agent runs on each server.
+* It collects logs and metrics (e.g., from Nginx logs, MySQL stats).
+* Sends data to a centralized dashboard (like Sumologic, Prometheus, or Datadog).
+
+---
+
+### **How to Monitor Web Server QPS**
+
+* Use tools like:
+
+  * **Nginx logs + custom script** to count requests per second.
+  * **Prometheus + Node Exporter + Nginx Exporter**.
+  * **Sumologic agent** parsing access logs.
+* Set up a graph/dashboard that tracks QPS in real-time or historical view.
+
+---
+
+## Issues in This Infrastructure
+
+### **SSL Termination at Load Balancer**
+
+* **Problem**: SSL is decrypted at the LB, and traffic to web servers is in plain HTTP.
+* **Risk**: If internal network is compromised, attacker can sniff data.
+* **Fix**: Use **end-to-end encryption** (LB to web servers over HTTPS).
+
+---
+
+### **Only One MySQL Write-Capable Node**
+
+* **Problem**: If the DB crashes, no writes are possible.
+* **Risk**: SPOF for all dynamic content creation.
+* **Fix**: Use a **replicated setup** with failover (e.g., MySQL Group Replication or Galera).
+
+---
+
+### **Each Server Has All Components (DB, App, Web)**
+
+* **Problem**: Poor separation of concerns, resource contention, and scalability.
+* **Example**: A spike in web traffic could affect DB performance.
+* **Fix**: Use **role separation**—dedicated DB server, web servers, etc.
