@@ -202,3 +202,46 @@ Through the **Internet**, using **TCP/IP protocols** like HTTP/HTTPS over port 8
 * **Problem**: Poor separation of concerns, resource contention, and scalability.
 * **Example**: A spike in web traffic could affect DB performance.
 * **Fix**: Use **role separation**—dedicated DB server, web servers, etc.
+
+---
+
+Great — you're now on **Task 3: Scale Up**. This is the most robust infrastructure so far. You’ll improve **redundancy**, **scalability**, and **separation of concerns** by fully splitting web, app, DB, and load-balancer components.
+
+---
+
+### Diagram Layout
+
+![Scaled-up infrastructure](scaled-up-diagram.png)
+
+## Explanations
+
+### **Why Each New Element Was Added**
+
+* **Extra Load Balancer (HAproxy Cluster)**:
+
+  * Ensures high availability.
+  * If one load balancer fails, the other can take over (failover via keepalived, VRRP, etc.).
+
+* **Dedicated Web Server(s)**:
+
+  * Handles only HTTP(S) requests.
+  * Improves maintainability and performance under heavy load.
+
+* **Dedicated Application Server(s)**:
+
+  * Separates business logic (e.g., Python/Node backend) from web server.
+  * Allows independent scaling of backend logic.
+
+* **Dedicated Database Server(s)**:
+
+  * Improves security and performance of the DB layer.
+  * Can scale DB separately (e.g., through replication, sharding, etc.).
+
+* **New Server Added**:
+
+  * Could serve as:
+
+    * An additional application server (scaling logic layer)
+    * A read-replica database
+    * A dedicated cache (like Redis)
+    * Or a second load balancer (if you were previously using only one)
